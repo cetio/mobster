@@ -141,7 +141,7 @@ def main():
         # Determine watched status by checking if ANY torrent hash is watched
         # Quality of the torrent doesn't really matter, as it's the same title anyway.
         watched_any = any(has_watched(t['hash']) for t in movie.get('torrents', []))
-        mark = "✓" if watched_any else "X"
+        mark = "O" if watched_any else "X"
         options.append(f"{mark} {title}")
         movie_map[title] = movie  # map by title for easy access
 
@@ -156,7 +156,7 @@ def main():
     print(f"You selected: {selection}")
 
     # Remove watched mark prefix and leading space
-    if selection.startswith(("✓ ", "X ")):
+    if selection.startswith(("O ", "X ")):
         selection = selection[2:].strip()
 
     if selection not in movie_map:
@@ -214,7 +214,7 @@ def main():
                     os.system('clear')
                     subprocess.run(['chafa', '--symbols', 'braille', img_path])
                     print(f"\n{selection} — {quality} — {size}\n")
-
+    # TODO: Make it so covers aren't total shit
     if cover_enabled:
         threading.Thread(target=fetch_cover, daemon=True).start()
 
