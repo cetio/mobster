@@ -33,6 +33,28 @@ TRACKERS = [
 RETRY = 2
 # %^^@#*((!#&*$()))
 
+WATCHED_FILE = os.path.expanduser("~/.mobster_watched.json")
+
+def has_watched(hashid):
+    if not os.path.exists(WATCHED_FILE):
+        return False
+    try:
+        watched = json.load(open(WATCHED_FILE))
+    except Exception:
+        return False
+    return hashid in watched
+
+def mark_watched(hashid):
+    watched = {}
+    if os.path.exists(WATCHED_FILE):
+        try:
+            watched = json.load(open(WATCHED_FILE))
+        except Exception:
+            pass
+    watched[hashid] = True
+    with open(WATCHED_FILE, 'w') as f:
+        json.dump(watched, f)
+
 # Check CLI dependencies
 def check_tool(name):
     if not shutil.which(name):
@@ -43,7 +65,7 @@ for tool in ("fzf", "peerflix"):
     check_tool(tool)
 cover_enabled = bool(shutil.which("chafa"))
 if not cover_enabled:
-    print("!  Optional cover tool 'chafa' not found—skipping cover art.")
+    print("! Optional cover tool 'chafa' not found—skipping cover art.")
 
 # Retry HTTP GET
 def retry_get(url, path):
@@ -71,7 +93,6 @@ def prompt_fzf(options, prompt_text):
     out, _ = proc.communicate(input_str)
     return out.strip()
 
-# cyclomatic complexity is too high :-)
 def main():
     tmpdir = tempfile.mkdtemp(prefix='mobster_')
     print(f"Temporary directory: {tmpdir}")
@@ -109,42 +130,77 @@ def main():
         shutil.rmtree(tmpdir)
         return
 
-    # 3) Build selection list
+    # 3) Build unique movie list for main menu with watched mark
+    # id works fine here but might not be best
+    movies = data['data']['movies']
     options = []
-    for movie in data['data']['movies']:
+    movie_map = {}
+    for movie in movies:
+        movie_id = movie.get('id')
         title = movie.get('title_long')
-        for tor in movie.get('torrents', []):
-            q = tor.get('quality')
-            sz = tor.get('size')
-            h = tor.get('hash')
-            options.append(f"{title} — {q} — {sz} — {h}")
-    print(f"Preparing {len(options)} options...")
+        # Determine watched status by checking if ANY torrent hash is watched
+        # Quality of the torrent doesn't really matter, as it's the same title anyway.
+        watched_any = any(has_watched(t['hash']) for t in movie.get('torrents', []))
+        mark = "✓" if watched_any else "X"
+        options.append(f"{mark} {title}")
+        movie_map[title] = movie  # map by title for easy access
 
-    # 4) User picks option
-    selection = prompt_fzf(options, 'Pick> ')
+    print(f"Preparing {len(options)} unique movie options...")
+
+    # 4) User picks a movie title
+    selection = prompt_fzf(options, 'Pick movie> ')
     if not selection:
         print("Selection canceled.")
         shutil.rmtree(tmpdir)
         return
     print(f"You selected: {selection}")
 
-    title, quality, size, hashid = [p.strip() for p in selection.split('—')]
-    print(f"Parsed: Title='{title}', Quality={quality}, Size={size}")
+    # Remove watched mark prefix and leading space
+    if selection.startswith(("✓ ", "X ")):
+        selection = selection[2:].strip()
 
-    # 5) Construct magnet link
-    dn = urllib.parse.quote(title)
+    if selection not in movie_map:
+        print("Selected movie not found in data, exiting.")
+        shutil.rmtree(tmpdir)
+        return
+
+    movie = movie_map[selection]
+
+    # 5) Build quality submenu (list all torrents for that movie)
+    quality_options = []
+    for tor in movie.get('torrents', []):
+        q = tor.get('quality')
+        sz = tor.get('size')
+        h = tor.get('hash')
+        quality_options.append(f"{q} — {sz} — {h}")
+
+    print(f"Preparing {len(quality_options)} quality options for '{selection}'...")
+
+    # 6) User picks quality
+    quality_selection = prompt_fzf(quality_options, 'Pick quality> ')
+    if not quality_selection:
+        print("Quality selection canceled.")
+        shutil.rmtree(tmpdir)
+        return
+    print(f"You selected: {quality_selection}")
+
+    quality, size, hashid = [p.strip() for p in quality_selection.split('—')]
+    print(f"Parsed: Title='{selection}', Quality={quality}, Size={size}")
+
+    # Mark as watched for the selected torrent hash
+    mark_watched(hashid)
+
+    # 7) Construct magnet link
+    dn = urllib.parse.quote(selection)
     magnet = f"magnet:?xt=urn:btih:{hashid}&dn={dn}"
     for tr in TRACKERS:
         magnet += f"&tr={urllib.parse.quote(tr)}"
     print(f"Magnet URI: {magnet}")
 
-    # 6) Fetch cover art in background
+    # 8) Fetch cover art in background
     def fetch_cover():
-        for movie in data['data']['movies']:
-            if any(t['hash'] == hashid for t in movie.get('torrents', [])):
-                movie_id = movie.get('id')
-                break
-        else:
+        movie_id = movie.get('id')
+        if not movie_id:
             print("No matching movie ID, skipping cover art.")
             return
         details_path = os.path.join(tmpdir, 'details.json')
@@ -157,13 +213,14 @@ def main():
                 if retry_get(img_url, img_path):
                     os.system('clear')
                     subprocess.run(['chafa', '--symbols', 'braille', img_path])
-                    print(f"\n{title} — {quality} — {size}\n")
+                    print(f"\n{selection} — {quality} — {size}\n")
 
     if cover_enabled:
         threading.Thread(target=fetch_cover, daemon=True).start()
 
-    # 7) Launch peerflix → mpv
+    # 9) Launch peerflix → mpv
     print("*  Launching stream via peerflix + mpv...")
+    # This outputs the mpv prompt continually for some reason?
     os.execvp('peerflix', ['peerflix', magnet, '--mpv'])
 
 if __name__ == '__main__':
