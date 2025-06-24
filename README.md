@@ -13,6 +13,7 @@
 ### **ARTIFICIAL INTELLIGENCE**
 
 THIS SCRIPT IS SENTIENT, AND ENTIRELY ARTIFICIALLY INTELLIGENT.
+
 DO NOT RUN IT AS SUDO OR IT WILL AGENTICALLY RUN `rm -rf /**`
 
 ## Requirements
@@ -48,9 +49,9 @@ Just type your movie name and hit enter. Mobster will do the rest.
 - Doesn’t keep any cache or logs.
 - Fun for the whole family, except Rodger.
 - Works best in a decent-width terminal (80+ columns recommended).
- - chafa may require more space or render strangely based on your sizing.
+  - chafa may require more space or render strangely based on your sizing.
 
-## Screenshot
+## Screenshot (with a little imagination)
 
 ```
 Temporary directory: /tmp/mobster_abc123
@@ -65,6 +66,8 @@ Fetching cover art...
 [ASCII Art Here]
 * Launching stream via peerflix + mpv...
 ```
+
+This is what your terminal sees...
 
 ## License
 
