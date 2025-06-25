@@ -1,0 +1,16 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/mobster
+mobster.so
+mobster.dylib
+mobster.dll
+mobster.a
+mobster.lib
+mobster-test-*
+*.exe
+*.pdb
+*.o
+*.obj
+*.lst

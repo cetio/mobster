@@ -1,0 +1,12 @@
+{
+	"authors": [
+		"cet"
+	],
+	"copyright": "Copyright © 2025, cet",
+	"dependencies": {
+		"tern": "~>0.2.27"
+	},
+	"description": "A minimal D application.",
+	"license": "AGPL-3.0-or-later",
+	"name": "mobster"
+}
