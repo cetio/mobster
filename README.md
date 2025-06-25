@@ -25,7 +25,8 @@ Besides my own library that I maintain for D, it has no external dependencies, a
 
 ## Roadmap
 
-- [ ] Tor relay for privacy/"ethical" reasons
+- [ ] dstep libtorrent headers to actually be able to torrent -> make that a package
+- [ ] Prematurely optimize
 - [ ] Continue and track watched movies based on progress
 - [ ] Render coverart and movie details (metadata)
 - [ ] Godzilla mode
