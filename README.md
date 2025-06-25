@@ -1,75 +1,37 @@
-# mobster.py
+# Mobster
 
-**An evil Python script scrabbled together to allow for watching movies & more from the commandline via torrents.**
+> [!WARNING]
+> This is an educational tool, and I assume no legal liability in the event that it is misused.
+>
+> By using Mobster you implicitly agree that, in the event a federal or local authority were to question you, you are to be hanged in the gallows.
+
+A tool for easily accessing and watching movies, shows, and more from various different providers modularly from the commandline.
+
+Mobster was initially intended to be a script, but due to logistical constraints (Python being impossible to use at scale,) it has transitioned to D.
+The original script will remain available until the new version is superior.
 
 ## Features
 
-- Search YTS movies using `fzf`
-- Choose video quality from a list of torrent options
-- Automatically streams via `peerflix` + `mpv`
-- Renders cover art as ASCII directly in terminal using Chafa.
-- Zero config. Just run and enjoy.
+- Fuzzy searching movies based on a query with quality options
+- Various different providers (currently supports YTS and PirateBay [ApiBay])
+- Automatically streams without configuration
 
-### **ARTIFICIAL INTELLIGENCE**
+### Why Mobster?
 
-THIS SCRIPT IS SENTIENT, AND ENTIRELY ARTIFICIALLY INTELLIGENT.
+Mobster is intended to be significantly more reliable than alternatives, such as Lobster, and provide seamless supports
+for various different providers without any hitches.
 
-DO NOT RUN IT AS SUDO OR IT WILL AGENTICALLY RUN `rm -rf /**`
+Besides my own library that I maintain for D, it has no external dependencies, and the python script only uses simple CLI packages.
 
-## Requirements
+## Roadmap
 
-Despite being a Python script, Mobster doesn't actually use much of any dependencies from Python, you simply need:
-
-- Python 3
-- `python-requests`
-- `fzf` (CLI)
-- `mpv` (VLC may end up gaining support)
-- `peerflix` (CLI)
-- Optionally: `chafa` (if you'd like external cover rendering)
-
-## Usage
-
-If you're a dork, you can use the following:
-
-```bash
-python3 mobster.py
-```
-
-Otherwise:
-
-```bash
-./mobster.py
-```
-
-Just type your movie name and hit enter. Mobster will do the rest.
-
-## Notes
-
-- Simply functions, no weird shenanigans but no guarantees for content.
-- Doesn’t keep any cache or logs.
-- Fun for the whole family, except Rodger.
-- Works best in a decent-width terminal (80+ columns recommended).
-  - chafa may require more space or render strangely based on your sizing.
-
-## Screenshot (with a little imagination)
-
-```
-Temporary directory: /tmp/mobster_abc123
-* Enter search term(s):
-Searching for: Shin Godzilla
-Found 3 results
-Preparing 6 options...
-You selected: Shin Godzilla (2016) — 1080p — 1.82 GB — [HASH]
-Parsed: Title='Shin Godzilla (2016)', Quality=1080p, Size=1.82 GB
-Magnet URI: magnet:?xt=urn:btih:...
-Fetching cover art...
-[ASCII Art Here]
-* Launching stream via peerflix + mpv...
-```
-
-This is what your terminal sees...
+- [ ] Tor relay for privacy/"ethical" reasons
+- [ ] Continue and track watched movies based on progress
+- [ ] Render coverart and movie details (metadata)
+- [ ] Godzilla mode
+- [ ] Allow for using arguments to find and play or retrieve data
+- [ ] Rofi integration
 
 ## License
 
-Mobster is licensed under the [AGPL-3.0 License](LICENSE.txt) but for legal reasons this is an educational tool.
-By using Mobster you forgo all human rights and implicitly agree that, in the event a federal or local authority were to question you, you are to be hanged in the gallows.
+Mobster is licensed under the [AGPL-3.0 License](LICENSE.txt)
