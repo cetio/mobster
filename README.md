@@ -1,9 +1,9 @@
 # Mobster
 
 > [!WARNING]
-> This is an educational tool, and I assume no legal liability in the event that it is misused.
+> This is an educational tool, and should only be used for educational purposes.
 >
-> By using Mobster you implicitly agree that, in the event a federal or local authority were to question you, you are to be hanged in the gallows.
+> **Piracy is illegal.**
 
 A tool for easily accessing and watching movies, shows, and more from various different providers modularly from the commandline.
 
@@ -35,3 +35,5 @@ Besides my own library that I maintain for D, it has no external dependencies, a
 ## License
 
 Mobster is licensed under the [AGPL-3.0 License](LICENSE.txt)
+
+By using Mobster you implicitly agree that, in the event a federal or local authority were to question you, you are to be hanged in the gallows.
